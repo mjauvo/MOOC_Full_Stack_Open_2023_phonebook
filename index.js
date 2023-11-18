@@ -7,22 +7,25 @@ const cors = require('cors')
 const app = express()
 const Person = require('./models/person')
 
-app.use(express.json())
-//app.use(morgan('tiny'))
+const requestLogger = (request, response, next) => {
+    console.log('Method:', request.method)
+    console.log('Path:  ', request.path)
+    console.log('Body:  ', request.body)
+    console.log('---')
+    next()
+}
 
 morgan.token('data', (request) => JSON.stringify(request.body))
 app.use(morgan(':method :url :status  :res[content-length] - :response-time ms :data'))
 
 app.use(cors())
 app.use(express.static('build'))
+app.use(express.json())
+app.use(requestLogger)
 
-const home = `<h1>Hello World!</h1><h3>This is Phonebook App (exercise 3.15)</h3>`
+// ----------------------------------------
 
-// Show homepage
-app.get('/', (request, response) => {
-    //console.log('GET request: /')
-    response.send(home)
-})
+const home = `<h1>Hello World!</h1><h3>This is Phonebook App (exercise 3.16)</h3>`
 
 // Show info page
 app.get('/info', (request, response) => {
@@ -35,12 +38,17 @@ app.get('/info', (request, response) => {
     })
 })
 
+// ---- DATABASE OPERATIONS ---------------
+
 // Fetch and show all persons
 app.get('/api/persons', (request, response) => {
     console.log('GET request: /api/persons')
     Person.find({})
         .then(persons => {
             response.json(persons)
+        })
+        .catch((error) => {
+            console.log(error)
         })
 })
 
@@ -76,15 +84,35 @@ app.post('/api/persons', (request, response) => {
 })
 
 // Delete a person
-app.delete("/api/persons/:id", (request, response) => {
-    Person.findByIdAndDelete(request.params.id)
+app.delete("/api/persons/:id", (request, response, next) => {
+    Person.findByIdAndRemove(request.params.id)
         .then(result => {
             response.status(204).end();
         })
-        .catch((error) => {
-            console.log("Error deleting a person:", error.message)
-        })
+        .catch(error => next(error))
 })
+
+// ---- ERROR HANDLING --------------------
+
+const unknownEndpoint = (request, response) => {
+    response.status(404)
+        .send({ error: 'unknown endpoint' })
+}
+
+app.use(unknownEndpoint)
+
+const errorHandler = (error, request, response, next) => {
+    console.error(error.message)
+  
+    if (error.name === 'CastError') {
+        return response.status(400)
+            .send({ error: 'malformatted id' })
+    }
+  
+    next(error)
+}
+
+app.use(errorHandler)
 
 // ----------------------------------------
 
