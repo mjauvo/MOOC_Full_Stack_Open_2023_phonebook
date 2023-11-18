@@ -25,15 +25,16 @@ app.use(requestLogger)
 
 // ----------------------------------------
 
-const home = `<h1>Hello World!</h1><h3>This is Phonebook App (exercise 3.17)</h3>`
+const home = `<h1>Hello World!</h1><h3>This is Phonebook App (exercise 3.18)</h3>`
 
 // Show info page
 app.get('/info', (request, response) => {
     console.log('GET request: /info')
     Person.find({}).then(persons => {
         response.send(`
-        <p>Phonebook has info for ${persons.length} people.</p>
-        <p>${new Date()}</p>
+        <h2>Phonebook Info</h2>
+        <p>Phonebook contains info for <strong>${persons.length} people.</strong></p>
+        <p>Date: ${new Date()}</p>
         `)
     })
 })
@@ -51,6 +52,20 @@ app.get('/api/persons', (request, response) => {
             console.log(error)
         })
 })
+
+// Fetch and show a person
+app.get("/api/persons/:id", (request, response, next) => {
+    Person.findById(request.params.id)
+        .then(person => {
+            if (person) {
+                response.json(person.toJSON());
+            } else {
+                response.status(404).end();
+            }
+        })
+        .catch(error => next(error));
+});
+  
 
 // Add a person
 app.post('/api/persons', (request, response) => {
