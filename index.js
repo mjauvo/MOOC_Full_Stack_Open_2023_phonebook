@@ -25,7 +25,7 @@ app.use(requestLogger)
 
 // ----------------------------------------
 
-const home = `<h1>Hello World!</h1><h3>This is Phonebook App (exercise 3.16)</h3>`
+const home = `<h1>Hello World!</h1><h3>This is Phonebook App (exercise 3.17)</h3>`
 
 // Show info page
 app.get('/info', (request, response) => {
@@ -61,7 +61,6 @@ app.post('/api/persons', (request, response) => {
             error: 'name missing'
         })
     }
-    // number is missing
     else if (body.number === undefined) {
         return response.status(400).json({
             error: 'number missing'
@@ -91,6 +90,23 @@ app.delete("/api/persons/:id", (request, response, next) => {
         })
         .catch(error => next(error))
 })
+
+// Update a person
+app.put("/api/persons/:id", (request, response, next) => {
+    const body = request.body;
+  
+    const person = {
+        name: body.name,
+        number: body.number
+    };
+  
+    Person.findByIdAndUpdate(request.params.id, person, { new: true })
+        .then(updatedPerson => {
+            response.json(updatedPerson);
+        })
+        .catch(error => next(error))
+});
+  
 
 // ---- ERROR HANDLING --------------------
 
