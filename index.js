@@ -16,7 +16,7 @@ app.use(morgan(':method :url :status  :res[content-length] - :response-time ms :
 app.use(cors())
 app.use(express.static('build'))
 
-const home = `<h1>Hello World!</h1><h3>This is Phonebook App (exercise 3.14)</h3>`
+const home = `<h1>Hello World!</h1><h3>This is Phonebook App (exercise 3.15)</h3>`
 
 // Show homepage
 app.get('/', (request, response) => {
@@ -38,9 +38,10 @@ app.get('/info', (request, response) => {
 // Fetch and show all persons
 app.get('/api/persons', (request, response) => {
     console.log('GET request: /api/persons')
-    Person.find({}).then(persons => {
-        response.json(persons)
-    })
+    Person.find({})
+        .then(persons => {
+            response.json(persons)
+        })
 })
 
 // Add a person
@@ -69,8 +70,21 @@ app.post('/api/persons', (request, response) => {
         .then(savedPerson => {
             response.json(savedPerson)
         })
+        .catch((error) => {
+            console.log("Error adding a person:", error.message)
+        })
 })
 
+// Delete a person
+app.delete("/api/persons/:id", (request, response) => {
+    Person.findByIdAndDelete(request.params.id)
+        .then(result => {
+            response.status(204).end();
+        })
+        .catch((error) => {
+            console.log("Error deleting a person:", error.message)
+        })
+})
 
 // ----------------------------------------
 
