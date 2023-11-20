@@ -25,7 +25,7 @@ app.use(requestLogger)
 
 // ----------------------------------------
 
-const home = `<h1>Hello World!</h1><h3>This is Phonebook App (exercise 3.20*)</h3>`
+///const home = `<h1>Hello World!</h1><h3>This is Phonebook App (exercise 3.22)</h3>`
 
 // Show info page
 app.get('/info', (request, response) => {
@@ -54,17 +54,17 @@ app.get('/api/persons', (request, response) => {
 })
 
 // Fetch and show a person
-app.get("/api/persons/:id", (request, response, next) => {
+app.get('/api/persons/:id', (request, response, next) => {
     Person.findById(request.params.id)
         .then(person => {
             if (person) {
-                response.json(person.toJSON());
+                response.json(person.toJSON())
             } else {
-                response.status(404).end();
+                response.status(404).end()
             }
         })
-        .catch(error => next(error));
-});
+        .catch(error => next(error))
+})
   
 
 // Add a person
@@ -93,35 +93,33 @@ app.post('/api/persons', (request, response, next) => {
             response.json(savedPerson)
         })
         .catch(error => {
-            console.log("Error adding a person:", error.message.error)
+            console.log('Error adding a person: ', error.message.error)
             next(error)
         })
 })
 
 // Delete a person
-app.delete("/api/persons/:id", (request, response, next) => {
+app.delete('/api/persons/:id', (request, response, next) => {
     Person.findByIdAndRemove(request.params.id)
-        .then(result => {
-            response.status(204).end();
-        })
+        .then(response.status(204).end())
         .catch(error => next(error))
 })
 
 // Update a person
-app.put("/api/persons/:id", (request, response, next) => {
-    const body = request.body;
+app.put('/api/persons/:id', (request, response, next) => {
+    const body = request.body
   
     const person = {
         name: body.name,
         number: body.number
-    };
+    }
   
     Person.findByIdAndUpdate(request.params.id, person, { new: true })
         .then(updatedPerson => {
-            response.json(updatedPerson);
+            response.json(updatedPerson)
         })
         .catch(error => next(error))
-});
+})
   
 
 // ---- ERROR HANDLING --------------------

@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
+    "lint": "eslint .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Markus J. Auvo",
@@ -19,6 +20,7 @@
   },
   "devDependencies": {
     "@flydotio/dockerfile": "^0.2.15",
+    "eslint": "^8.54.0",
     "nodemon": "^2.0.22"
   }
 }
