@@ -25,7 +25,7 @@ app.use(requestLogger)
 
 // ----------------------------------------
 
-const home = `<h1>Hello World!</h1><h3>This is Phonebook App (exercise 3.19*)</h3>`
+const home = `<h1>Hello World!</h1><h3>This is Phonebook App (exercise 3.20*)</h3>`
 
 // Show info page
 app.get('/info', (request, response) => {
