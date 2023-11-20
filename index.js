@@ -25,7 +25,7 @@ app.use(requestLogger)
 
 // ----------------------------------------
 
-const home = `<h1>Hello World!</h1><h3>This is Phonebook App (exercise 3.18)</h3>`
+const home = `<h1>Hello World!</h1><h3>This is Phonebook App (exercise 3.19*)</h3>`
 
 // Show info page
 app.get('/info', (request, response) => {
@@ -68,7 +68,7 @@ app.get("/api/persons/:id", (request, response, next) => {
   
 
 // Add a person
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
     const body = request.body
 
     if (body.name === undefined) {
@@ -92,8 +92,9 @@ app.post('/api/persons', (request, response) => {
         .then(savedPerson => {
             response.json(savedPerson)
         })
-        .catch((error) => {
-            console.log("Error adding a person:", error.message)
+        .catch(error => {
+            console.log("Error adding a person:", error.message.error)
+            next(error)
         })
 })
 
@@ -138,6 +139,10 @@ const errorHandler = (error, request, response, next) => {
     if (error.name === 'CastError') {
         return response.status(400)
             .send({ error: 'malformatted id' })
+    }
+    else if (error.name === 'ValidationError') {
+        return response.status(400)
+            .send({error: error.message})
     }
   
     next(error)
